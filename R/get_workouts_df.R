@@ -3,13 +3,12 @@
 #' This function will gather all individual workouts for a specified user and return the results in a data frame.
 #' If a user id is not passed into the function, it will return the current users workouts.
 #' @param user_id Peloton user id.
-#' @param pages Integer number of pages to retrieve from API
-#' @param limit Boolean flag to impose page limit on total requests. Defaults to TRUE.
+#' @param pages Integer number of pages to retrieve from API (defaults to 0, which specifies no limit)
 #' @keywords Peloton, authenticated, workouts, DataFrame
 #' @export
 #' @examples
 #' get_workouts_df()
-get_workouts_df <- function(user_id, pages = 10, limit = TRUE) {
+get_workouts_df <- function(user_id, pages = 0) {
 
   # If user id is missing, select the current users id
   if (missing(user_id)) {
@@ -28,10 +27,10 @@ get_workouts_df <- function(user_id, pages = 10, limit = TRUE) {
   }
 
   # Set the number of pages of ride data to fetch
-  if (limit == TRUE) {
+  if (pages != 0) {
     total_pages <- pages - 1
   } else {
-    total_page <- jsonlite::fromJSON(rawToChar(request$content))$page_count - 1
+    total_pages <- jsonlite::fromJSON(rawToChar(request$content))$page_count - 1
   }
 
   # Iterate through the remaining pages and union the tables

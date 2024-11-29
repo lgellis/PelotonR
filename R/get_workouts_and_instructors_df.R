@@ -3,11 +3,12 @@
 #' This function will gather all individual workouts and all related instructor data for a user and
 #' return it in a data frame. If a user id is not passed into the function, it will return the current users workouts.
 #' @param user_id Your Peloton user id.
+#' @param pages Integer number of pages to retrieve from API (defaults to 0 for no limit)
 #' @keywords Peloton, authenticated, workouts, instructors, DataFrame
 #' @export
 #' @examples
 #' get_workouts_and_instructors_df()
-get_workouts_and_instructors_df <- function(user_id) {
+get_workouts_and_instructors_df <- function(user_id, pages=0) {
 
   # If user id is missing, select the current users id
   if (missing(user_id)) {
@@ -22,7 +23,7 @@ get_workouts_and_instructors_df <- function(user_id) {
   `%>%` <- magrittr::`%>%`
 
   # Get workout data and format
-  workouts_df <- get_workouts_df(user_id) %>%
+  workouts_df <- get_workouts_df(user_id, pages) %>%
     stats::setNames(paste0("workout.", names(.))) %>%
     dplyr::rename(instructor_id = workout.peloton.ride.instructor_id)
 
