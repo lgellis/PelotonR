@@ -4,10 +4,12 @@
 \alias{get_workouts_and_instructors_df}
 \title{Get Workout and Instructor Details in a DataFrame}
 \usage{
-get_workouts_and_instructors_df(user_id)
+get_workouts_and_instructors_df(user_id, pages = 0)
 }
 \arguments{
 \item{user_id}{Your Peloton user id.}
+
+\item{pages}{Integer number of pages to retrieve from API (defaults to 0 for no limit)}
 }
 \description{
 This function will gather all individual workouts and all related instructor data for a user and

@@ -4,10 +4,12 @@
 \alias{get_workouts_df}
 \title{Get Workout Details in a DataFrame}
 \usage{
-get_workouts_df(user_id)
+get_workouts_df(user_id, pages = 0)
 }
 \arguments{
 \item{user_id}{Peloton user id.}
+
+\item{pages}{Integer number of pages to retrieve from API (defaults to 0, which specifies no limit)}
 }
 \description{
 This function will gather all individual workouts for a specified user and return the results in a data frame.

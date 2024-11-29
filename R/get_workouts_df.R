@@ -3,11 +3,12 @@
 #' This function will gather all individual workouts for a specified user and return the results in a data frame.
 #' If a user id is not passed into the function, it will return the current users workouts.
 #' @param user_id Peloton user id.
+#' @param pages Integer number of pages to retrieve from API (defaults to 0, which specifies no limit)
 #' @keywords Peloton, authenticated, workouts, DataFrame
 #' @export
 #' @examples
 #' get_workouts_df()
-get_workouts_df <- function(user_id) {
+get_workouts_df <- function(user_id, pages = 0) {
 
   # If user id is missing, select the current users id
   if (missing(user_id)) {
@@ -25,16 +26,19 @@ get_workouts_df <- function(user_id) {
     stop("PelotonR: Cannot gather workout details for specified user_id")
   }
 
-  # Gather the first page of ride data
-  total_pages <- jsonlite::fromJSON(rawToChar(request$content))$page_count
-  total_pages <- total_pages - 1
+  # Set the number of pages of ride data to fetch
+  if (pages != 0) {
+    total_pages <- pages - 1
+  } else {
+    total_pages <- jsonlite::fromJSON(rawToChar(request$content))$page_count - 1
+  }
 
   # Iterate through the remaining pages and union the tables
   for (i in 1:total_pages) {
     call <- paste0("https://api.onepeloton.com/api/user/", user_id, "/workouts?page=", i, "&joins=peloton.ride")
     request <- httr::GET(call)
     add_data <- data.table::as.data.table(jsonlite::fromJSON(rawToChar(request$content))$data)
-    workout_df <- dplyr::union_all(workout_df, add_data)
+    workout_df <- rbind(workout_df, add_data, fill=TRUE)
   }
 
   # Perform some formatting
